@@ -1,0 +1,94 @@
+{% extends 'proj_labels/base.html' %}
+{% block projects_active %}active{% endblock %}
+
+{% block body %}
+<div class="projects-container container-fluid">
+
+    <!-- projects -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Projects</h3>
+        </div>
+        {% if projects %}
+            {% for project in projects %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a href="{% url 'proj_labels:detail' project.id %}">
+                        </a>
+                        <div class="caption">
+                            <h2>{{ project.project_name }}</h2>
+                            {% for label in project.label_set.all %}
+                                <td>{{ label.label_title }} - {{ label.macro_type }}</td>
+                            {% endfor %}
+                            <!-- View Details -->
+                            <a href="{% url 'proj_labels:detail' project.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <br>
+                <a href="{% url 'proj_labels:create_project' %}">
+                    <button type="button" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an project
+                    </button>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- If user searches and there are labels -->
+    {% if labels %}
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>labels</h3>
+            </div>
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>label Title</th>
+                                    <th>Artist</th>
+                                    <th>Audio File</th>
+                                    <th>project</th>
+                                    <th>Favorite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for label in labels %}
+                                    <tr>
+                                        <td>{{ label.label_title }}</td>
+                                        <td>
+                                            <a target="_blank" href="{{ label.audio_file.url }}">
+                                                <button type="button" class="btn btn-success btn-xs">
+                                                    <span class="glyphicon glyphicon-play"></span>&nbsp; Play
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'proj_labels:detail' label.project.id %}">
+                                                <img src="{{ label.project.project_logo.url }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
+                                            </a>
+                                            <a href="{% url 'proj_labels:detail' label.project.id %}">{{ label.project.project_title }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'proj_labels:favorite' label.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if label.is_favorite %}active{% endif %}"></span></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

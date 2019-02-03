@@ -1,0 +1,66 @@
+{% extends 'proj_labels/base.html' %}
+{% block title %}All Labels{% endblock %}
+{% block labels_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid labels-container">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" {% if filter_by == 'all' %}class="active"{% endif %}><a href="{% url 'proj_labels:labels' 'all' %}">View All</a></li>
+                <li role="presentation" {% if filter_by == 'favorites' %}class="active"{% endif %}><a href="{% url 'proj_labels:labels' 'favorites' %}">Favorites</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Label Title</th>
+                                <th>Artist</th>
+                                <th>Audio File</th>
+                                <th>Project</th>
+                                <th>Favorite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for label in label_list %}
+                                <tr>
+                                    <td>{{ label.label_title }}</td>
+                                    <td>{{ label.project.artist }}</td>
+                                    <td>
+                                        <a target="_blank" href="{{ label.audio_file.url }}">
+                                            <button type="button" class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-play"></span>&nbsp; Play
+                                            </button>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'proj_labels:detail' label.project.id %}">
+                                            <img src="{{ label.project.project_logo.url }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
+                                        </a>
+                                        <a href="{% url 'proj_labels:detail' label.project.id %}">{{ label.project.project_title }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'proj_labels:favorite' label.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if label.is_favorite %}active{% endif %}"></span></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'proj_labels/base.html' %}
+{% block title %}{{ project }}{% endblock %}
+{% block projects_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid labels-container">
+
+    <div class="row">
+
+        <!-- Left Project Info -->
+        <div class="col-sm-4 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a href="{% url 'proj_labels:detail' project.id %}">
+                        {% if project.project_logo %}
+                            <img src="{{ project.project_logo.url }}" class="img-responsive">
+                        {% else %}
+                            <h3>No image to display</h3>
+                        {% endif %}
+                    </a>
+                    <h1>{{ project.project_title }} <small>{{ project.genre }}</small></h1>
+                    <h2>{{ project.artist }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Label Info -->
+        <div class="col-sm-8 col-md-9">
+
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" class="active"><a href="{% url 'proj_labels:detail' project.id %}">View All</a></li>
+                <li role="presentation"><a href="{% url 'proj_labels:create_label' project.id %}">Add New Label</a></li>
+            </ul>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <h3>All Labels</h3>
+
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Audio File</th>
+                            <th>Favorite</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for label in project.label_set.all %}
+                            <tr>
+                                <td>{{ label.label_title }}</td>
+                                <td>
+                                    <a target="_blank" href="{{ label.audio_file.url }}">
+                                        <button type="button" class="btn btn-success btn-xs">
+                                            <span class="glyphicon glyphicon-play"></span>&nbsp; Play
+                                        </button>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'proj_labels:favorite' label.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if label.is_favorite %}active{% endif %}"></span></a>
+                                </td>
+                                <td>
+                                    <form action="{% url 'proj_labels:delete_label' project.id label.id %}" method="post" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="label_id" value="{{ label.id }}" />
+                                        <button type="submit" class="btn btn-danger btn-xs">
+                                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
